@@ -1,0 +1,34 @@
+language: python
+dist: trusty
+sudo: false
+
+matrix:
+  include:
+  - os: linux
+    env: PYTHON=2.7
+    services: docker
+
+cache:
+  directories:
+  - $HOME/.local/bin
+  - $HOME/.local/lib
+  - $HOME/.local/include
+
+before_install:
+- |
+  
+install:
+- |
+  setup/install_prereqs.sh
+script:
+- $SCRIPT_RUN_PREFIX cmake ${CMAKE_EXTRA_ARGS}
+    -DPYBIND11_PYTHON_VERSION=$PYTHON
+    -DPYBIND11_CPP_STANDARD=$CPP
+    -DPYBIND11_WERROR=${WERROR:-ON}
+    -DDOWNLOAD_CATCH=${DOWNLOAD_CATCH:-ON}
+- $SCRIPT_RUN_PREFIX make pytest -j 2
+- $SCRIPT_RUN_PREFIX make cpptest -j 2
+- if [ -n "$CMAKE" ]; then $SCRIPT_RUN_PREFIX make test_cmake_build; fi
+after_failure: cat tests/test_cmake_build/*.log*
+after_script:
+- if [ -n "$DOCKER" ]; then docker stop "$containerid"; docker rm "$containerid"; fi
