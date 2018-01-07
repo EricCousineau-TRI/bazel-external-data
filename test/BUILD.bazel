@@ -1,4 +1,5 @@
 # -*- python -*-
+load(":meta_test.bzl", "meta_test")
 
 sh_test(
     name = "workflows_test",
@@ -8,4 +9,16 @@ sh_test(
         ":pkgs/bazel_pkg_advanced_test",
         "//:pkg_data",
     ],
+)
+
+meta_test(
+    workspace = "bazel_pkg_test",
+)
+
+meta_test(
+    workspace = "bazel_pkg_advanced_test",
+)
+
+meta_test(
+    workspace = "bazel_pkg_downstream_test",
 )
