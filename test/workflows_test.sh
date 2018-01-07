@@ -2,6 +2,12 @@
 set -e -u
 set -x
 
+# Prevent from running outside of Bazel.
+if [[ ! $(basename $(dirname ${PWD})) =~ .*\.runfiles ]]; then
+    echo "Must be run from within Bazel"
+    exit 1
+fi
+
 eecho() { echo "$@" >&2; }
 mkcd() { mkdir -p ${1} && cd ${1}; }
 bazel() { $(which bazel) --bazelrc=/dev/null "$@"; }
@@ -18,11 +24,10 @@ tmp_dir=/tmp/bazel_external_data
 
 # Follow `WORKFLOWS.md`
 mock_dir=${tmp_dir}/bazel_external_data_mock
+pkg_reldir=test/bazel_pkg_advanced_test
 
-# TODO: Prevent this from running outside of Bazel.
-
-# Copy what's needed for modifiable `bazel_pkg_advanced_test` directory.
-srcs="src tools test/bazel_pkg_advanced_test BUILD.bazel WORKSPACE"
+# Copy what's needed for a modifiable `bazel_pkg_advanced_test` directory.
+srcs="src tools BUILD.bazel WORKSPACE ${pkg_reldir}"
 rm -rf ${mock_dir}
 mkdir -p ${mock_dir}
 for src in ${srcs}; do
@@ -35,7 +40,7 @@ cache_dir=${tmp_dir}/test_cache
 upload_dir=${tmp_dir}/upload_extra
 
 # Start modifying.
-cd ${mock_dir}/test/bazel_pkg_advanced_test
+cd ${mock_dir}/${pkg_reldir}
 
 # Create a new package.
 mkcd data_new
