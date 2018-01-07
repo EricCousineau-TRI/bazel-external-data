@@ -5,6 +5,6 @@ workspace(name = "bazel_external_data_pkg")
 # Include these as local repositories to have them be ignored by `test ...`.
 # @ref https://github.com/bazelbuild/bazel/issues/2460#issuecomment-296940882
 local_repository(
-    name = "bazel_external_data_test_pkgs_ignore",
+    name = "bazel_external_data_test_ignore",
     path = "test/pkgs",
 )
