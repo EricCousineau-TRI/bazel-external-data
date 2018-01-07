@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e -u
 
+# Copy necessary files to create a (set of) workspace(s) from an existing Bazel
+# workspace. For meta-testing Bazel workflows.
+
 # Prevent from running outside of Bazel.
 if [[ ! $(basename $(dirname ${PWD})) =~ .*\.runfiles ]]; then
     echo "Must be run from within Bazel"
@@ -12,20 +15,20 @@ pkg_reldir=${2}
 shift && shift
 extra_dirs="$@"
 
-export TMP_BASE=/tmp/bazel_external_data
-mkdir -p ${TMP_BASE}
-export TMP_DIR=$(mktemp -d -p ${TMP_BASE})
+tmp_base=/tmp/bazel_workspace_test
+mkdir -p ${tmp_base}
+export WORKSPACE_TMP=$(mktemp -d -p ${tmp_base})
 
 # Copy what's needed for a modifiable `bazel_pkg_advanced_test` directory.
-mock_dir=${TMP_DIR}/mock_workspace
+mock_dir=${WORKSPACE_TMP}/mock_workspace
 
-srcs="src tools BUILD.bazel WORKSPACE ${pkg_reldir} ${extra_dirs}"
+srcs="${pkg_reldir} ${extra_dirs}"
 mkdir -p ${mock_dir}
-readlink_py() { python -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' ${1}; }
+readlink-py() { python -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' ${1}; }
 for src in ${srcs}; do
     subdir=$(dirname ${src})
     mkdir -p ${mock_dir}/${subdir}
-    cp -r $(readlink_py ${src}) ${mock_dir}/${subdir}
+    cp -r $(readlink-py ${src}) ${mock_dir}/${subdir}
 done
 
 # Change to the workspace directory, and begin.
@@ -33,4 +36,4 @@ cd ${mock_dir}/${pkg_reldir}
 # Get rid of Bazel symlinks.
 rm bazel-* || :
 # Execute command.
-COPY_AND_TEST=1 eval ${cmd}
+eval ${cmd}

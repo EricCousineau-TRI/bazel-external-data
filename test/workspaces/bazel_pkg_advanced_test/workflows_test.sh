@@ -2,6 +2,10 @@
 set -e -u
 set -x
 
+# This must be run as a workspace test.
+[[ -n ${WORKSPACE_TMP} ]]
+[[ $(basename ${PWD}) == "bazel_pkg_advanced_test" ]]
+
 eecho() { echo "$@" >&2; }
 mkcd() { mkdir -p ${1} && cd ${1}; }
 bazel() { $(which bazel) --bazelrc=/dev/null "$@"; }
@@ -9,20 +13,16 @@ bazel() { $(which bazel) --bazelrc=/dev/null "$@"; }
 bazel-test() { bazel test "$@"; bazel run "$@"; }
 should_fail() { eecho "Should have failed!"; exit 1; }
 
-# This must be run from `copy_and_test.sh`.
-[[ ${COPY_AND_TEST} == 1 ]]
-[[ $(basename ${PWD}) == "bazel_pkg_advanced_test" ]]
-
 # Clear out any old cache and upload in mock directory.
 # This is only important when running this test via `bazel run`.
 # @note This is hard-coded into the configuration files, and this *must* match.
 # Follow `WORKFLOWS.md`
-cache_dir=${TMP_DIR}/test_cache
-upload_dir=${TMP_DIR}/upload_extra
+cache_dir=${WORKSPACE_TMP}/test_cache
+upload_dir=${WORKSPACE_TMP}/upload_extra
 
 # Ensure we use the newer temp dir.
 find . -name '*external_data*.yml' | \
-    xargs sed -i "s#${TMP_BASE}#${TMP_DIR}#g"
+    xargs sed -i "s#/tmp/bazel_external_data#${WORKSPACE_TMP}#g"
 
 # Start modifying.
 # Create a new package.

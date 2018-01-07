@@ -2,27 +2,23 @@ def workspace_test(
         name,
         workspace = None,
         cmd="'bazel test //...'",  # *sigh*... Needs quotes.
-        workspace_deps = []):
+        data = []):
     if not workspace:
         workspace = name
-    path = "workspaces/{}".format(workspace)
-    data = [
-        path,
-        "//:root_data",
-    ]
+    datum = "workspaces/{}".format(workspace)
+    data_out = [datum]
     args = [
         cmd,
-        "$(location {})".format(path),
+        "$(location {})".format(datum),
     ]
-    for dep in workspace_deps:
-        extra_workspace = "workspaces/{}".format(dep)
-        data.append(extra_workspace)
-        args.append("$(location {})".format(extra_workspace))
+    for datum in data:
+        data_out.append(datum)
+        args.append("$(locations {})".format(datum))
     native.sh_test(
         name = name,
-        srcs = ["copy_and_test.sh"],
+        srcs = ["workspace_test.sh"],
         args = args,
-        data = data,
+        data = data_out,
     )
 
 def workspace_test_bad(workspace):

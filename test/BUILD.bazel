@@ -5,19 +5,23 @@ workspace_test(
     name = "workflows_test",
     workspace = "bazel_pkg_advanced_test",
     cmd = "./workflows_test.sh",
+    data = ["//:root_data"],
 )
 
 workspace_test(
     name = "bazel_pkg_test",
+    data = ["//:root_data"],
 )
 
 workspace_test(
     name = "bazel_pkg_advanced_test",
+    data = ["//:root_data"],
 )
 
 workspace_test(
     name = "bazel_pkg_downstream_test",
-    workspace_deps = [
-        "bazel_pkg_test",
+    data = [
+        ":workspaces/bazel_pkg_test",
+        "//:root_data",
     ],
 )
