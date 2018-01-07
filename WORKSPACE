@@ -6,5 +6,5 @@ workspace(name = "bazel_external_data_pkg")
 # @ref https://github.com/bazelbuild/bazel/issues/2460#issuecomment-296940882
 local_repository(
     name = "bazel_external_data_test_ignore",
-    path = "test/pkgs",
+    path = "test/workspaces",
 )
