@@ -1,11 +1,17 @@
-def workspace_test(workspace, workspace_deps = []):
+def workspace_test(
+        name,
+        workspace = None,
+        cmd="'bazel test //...'",  # *sigh*... Needs quotes.
+        workspace_deps = []):
+    if not workspace:
+        workspace = name
     path = "workspaces/{}".format(workspace)
     data = [
         path,
         "//:root_data",
     ]
     args = [
-        "'bazel test //...'",  # *sigh*
+        cmd,
         "$(location {})".format(path),
     ]
     for dep in workspace_deps:
@@ -13,7 +19,7 @@ def workspace_test(workspace, workspace_deps = []):
         data.append(extra_workspace)
         args.append("$(location {})".format(extra_workspace))
     native.sh_test(
-        name = workspace,
+        name = name,
         srcs = ["copy_and_test.sh"],
         args = args,
         data = data,

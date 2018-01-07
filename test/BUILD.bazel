@@ -1,29 +1,22 @@
 # -*- python -*-
 load(":workspace_test.bzl", "workspace_test")
 
-sh_test(
+workspace_test(
     name = "workflows_test",
-    srcs = ["copy_and_test.sh"],
-    args = [
-        "./workflows_test.sh",
-        "$(location workspaces/bazel_pkg_advanced_test)",
-    ],
-    data = [
-        ":workspaces/bazel_pkg_advanced_test",
-        "//:root_data",
-    ],
-)
-
-workspace_test(
-    workspace = "bazel_pkg_test",
-)
-
-workspace_test(
     workspace = "bazel_pkg_advanced_test",
+    cmd = "./workflows_test.sh",
 )
 
 workspace_test(
-    workspace = "bazel_pkg_downstream_test",
+    name = "bazel_pkg_test",
+)
+
+workspace_test(
+    name = "bazel_pkg_advanced_test",
+)
+
+workspace_test(
+    name = "bazel_pkg_downstream_test",
     workspace_deps = [
         "bazel_pkg_test",
     ],
