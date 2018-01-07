@@ -30,4 +30,7 @@ done
 
 # Change to the workspace directory, and begin.
 cd ${mock_dir}/${pkg_reldir}
+# Get rid of Bazel symlinks.
+rm bazel-*
+# Execute command.
 COPY_AND_TEST=1 eval ${cmd}
