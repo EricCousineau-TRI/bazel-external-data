@@ -24,7 +24,7 @@ tmp_dir=/tmp/bazel_external_data
 
 # Follow `WORKFLOWS.md`
 mock_dir=${tmp_dir}/bazel_external_data_mock
-pkg_reldir=test/bazel_pkg_advanced_test
+pkg_reldir=test/pkgs/bazel_pkg_advanced_test
 
 # Copy what's needed for a modifiable `bazel_pkg_advanced_test` directory.
 srcs="src tools BUILD.bazel WORKSPACE ${pkg_reldir}"

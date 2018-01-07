@@ -11,19 +11,19 @@ bazel() {
 
 echo "[ Example Interface ]"
 (
-    cd bazel_pkg_test
+    cd pkgs/bazel_pkg_test
     bazel test //...
 )
 
 echo "[ Downstream Consumption ]"
 (
-    cd bazel_pkg_downstream_test
+    cd pkgs/bazel_pkg_downstream_test
     bazel test //...
 )
 
 echo "[ Mock Storage ]"
 (
-    cd bazel_pkg_advanced_test
+    cd pkgs/bazel_pkg_advanced_test
     bazel test //...
 )
 
