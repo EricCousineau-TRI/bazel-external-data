@@ -2,46 +2,29 @@
 set -e -u
 set -x
 
-# Prevent from running outside of Bazel.
-if [[ ! $(basename $(dirname ${PWD})) =~ .*\.runfiles ]]; then
-    echo "Must be run from within Bazel"
-    exit 1
-fi
-
 eecho() { echo "$@" >&2; }
 mkcd() { mkdir -p ${1} && cd ${1}; }
 bazel() { $(which bazel) --bazelrc=/dev/null "$@"; }
 # For testing, we should be able to both (a) test and (b) run the target.
 bazel-test() { bazel test "$@"; bazel run "$@"; }
-readlink_py() { python -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' ${1}; }
 should_fail() { eecho "Should have failed!"; exit 1; }
+
+# This must be run from `copy_and_test.sh`.
+[[ ${COPY_AND_TEST} == 1 ]]
+[[ $(basename ${PWD}) == "bazel_pkg_advanced_test" ]]
 
 # Clear out any old cache and upload in mock directory.
 # This is only important when running this test via `bazel run`.
 # @note This is hard-coded into the configuration files, and this *must* match.
-tmp_dir=/tmp/bazel_external_data
-[[ -d ${tmp_dir} ]] && { eecho "Remove: ${tmp_dir}"; rm -rf ${tmp_dir}; }
-
 # Follow `WORKFLOWS.md`
-mock_dir=${tmp_dir}/bazel_external_data_mock
-pkg_reldir=test/pkgs/bazel_pkg_advanced_test
+cache_dir=${TMP_DIR}/test_cache
+upload_dir=${TMP_DIR}/upload_extra
 
-# Copy what's needed for a modifiable `bazel_pkg_advanced_test` directory.
-srcs="src tools BUILD.bazel WORKSPACE ${pkg_reldir}"
-rm -rf ${mock_dir}
-mkdir -p ${mock_dir}
-for src in ${srcs}; do
-    subdir=$(dirname ${src})
-    mkdir -p ${mock_dir}/${subdir}
-    cp -r $(readlink_py ${src}) ${mock_dir}/${subdir}
-done
-
-cache_dir=${tmp_dir}/test_cache
-upload_dir=${tmp_dir}/upload_extra
+# Ensure we use the newer temp dir.
+find . -name '*external_data*.yml' | \
+    xargs sed -i "s#${TMP_BASE}#${TMP_DIR}#g"
 
 # Start modifying.
-cd ${mock_dir}/${pkg_reldir}
-
 # Create a new package.
 mkcd data_new
 
