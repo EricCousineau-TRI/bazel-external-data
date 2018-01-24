@@ -13,4 +13,4 @@ def get_drake_path(workspace_dir):
     """Returns path of Drake. This is replaced under
     `external_data_workspace_test.sh`.
     """
-    return _dirname(workspace_dir, 4)
+    return _dirname(workspace_dir, 2)
