@@ -45,4 +45,4 @@ alias(
     actual = "//:cli",
 )
 
-expose_all_files()
+expose_all_files(sub_packages = ["backends"])

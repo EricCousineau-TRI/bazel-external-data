@@ -1,5 +1,7 @@
 # -*- python -*-
 
+load("@bazel_external_data_pkg//:expose_all_files.bzl", "expose_all_files")
+
 filegroup(
     name = "external_data_sentinel",
     srcs = [':.external_data.yml'],
@@ -14,4 +16,9 @@ py_test(
     ],
     size = "small",
     visibility = ["//visibility:public"],
+)
+
+expose_all_files(
+    sub_packages = ["data", "tools"],
+    sub_dirs = ["mock"],
 )

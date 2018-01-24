@@ -86,5 +86,5 @@ def add_external_data_test_repositories(workspace_dir):
     for workspace in _workspace_list:
         native.local_repository(
             name = workspace,
-            path = "/test/" + workspace,
+            path = "test/" + workspace,
         )

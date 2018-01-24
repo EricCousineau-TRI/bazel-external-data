@@ -1,3 +1,5 @@
 # -*- python -*-
 
-# Empty BUILD file to declare this directory as a package.
+load("@bazel_external_data_pkg//:expose_all_files.bzl", "expose_all_files")
+
+expose_all_files()
