@@ -19,12 +19,27 @@ py_library(
 )
 
 py_library(
+    name = "girder",
+    srcs = ["girder.py"],
+    deps = [":core"],
+)
+
+py_library(
     name = "backends",
     deps = [
         ":core",
+        ":girder",
     ],
     imports = imports,
     visibility = ["//bazel_external_data:__subpackages__"],
 )
 
-expose_all_files()
+py_test(
+    name = "girder_test",
+    srcs = ["test/girder_test.py"],
+    deps = [
+        ":girder",
+    ],
+)
+
+expose_all_files(sub_dirs = ["test"])
