@@ -97,12 +97,9 @@ class GirderHashsumBackend(Backend):
             raise util.DownloadError("File not available in Girder folder '{}': {} (hash: {})".format(self._folder_path, project_relpath, hash))
         r = self._request("/file/hashsum/{algo}/{hash}/download"
                           .format(algo=hash.get_algo(), hash=hash.get_value()))
-        print(r)
-        f = open(output_file, 'wb')
-        with r:
-            with f:
-                for chunk in r.iter_content(chunk_size=1024):
-                    f.write(chunk)
+        with open(output_file, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=1024):
+                f.write(chunk)
 
     def _get_girder_client(self):
         # @note We import girder_client here, as only uploading requires it at present.

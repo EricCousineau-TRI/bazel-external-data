@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+"""
+Provides a simple test script for uploading and download a file.
+"""
+
 import os
 import yaml
 
@@ -12,29 +16,29 @@ assert not util.in_bazel_runfiles()
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--url", type=str, default="https://drake-girder.csail.mit.edu")
+parser.add_argument("--folder_path", type=str, default="/collection/test/files")
 parser.add_argument("api_key", type=str)
 args = parser.parse_args()
-
-assert args.api_key is not None
-
-user_config = yaml.load("""
-girder:
-  url:
-    "{url}":
-        api_key: {api_key}
-""".format(url=args.url, api_key=args.api_key))
-user_config = config_helpers.merge_config(core.USER_CONFIG_DEFAULT, user_config)
 
 project_root = "/tmp/bazel_external_data/root"
 output = "/tmp/bazel_external_data/output"
 
+assert args.api_key is not None
+
+user_config = core.USER_CONFIG_DEFAULT
+user_config.update(yaml.load("""
+girder:
+  url:
+    "{url}":
+        api_key: {api_key}
+""".format(url=args.url, api_key=args.api_key)))
 user = core.User(user_config)
 
 config = yaml.load("""
 backend: girder_hashsum
-url: {}
-folder_path: /collection/test/files
-""".format(args.url))
+url: {url}
+folder_path: {folder_path}
+""".format(url=args.url, folder_path=args.folder_path))
 
 backend = GirderHashsumBackend(config, project_root, user)
 
