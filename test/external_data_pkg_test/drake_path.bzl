@@ -2,7 +2,7 @@
 
 # N.B. This code is only run when tests are run manually (with this as the
 # workspace, not as an external repository). Otherwise, this will be replaced
-# with the directory path of Drake when tested from `@drake`.
+# with the directory path of Drake when tested from `@bazel_external_data_pkg`.
 
 def _dirname(p, remove = 1):
     # Returns parent directory name for a path `p`.

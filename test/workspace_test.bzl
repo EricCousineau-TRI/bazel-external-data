@@ -27,7 +27,7 @@ def workspace_test(
     """
     native.sh_test(
         name = name,
-        srcs = ["@drake//tools/external_data/test:workspace_test.sh"],
+        srcs = ["@bazel_external_data_pkg//test:workspace_test.sh"],
         args = args,
         data = data,
     )

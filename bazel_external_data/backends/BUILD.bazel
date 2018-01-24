@@ -1,7 +1,7 @@
 # -*- python -*-
 
 
-load("//tools/external_data:expose_all_files.bzl", "expose_all_files")
+load("//:expose_all_files.bzl", "expose_all_files")
 
 
 # Use relative package path, as `py_library` does not like absolute package

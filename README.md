@@ -25,7 +25,7 @@ files from separate packages / workspaces.
 and Bazel `genrule`s).
 *   `test/`
     *   `BUILD.bazel` - Declares tests (unlike other Drake packages), declares
-    linting for all of `//tools/external_data/...`.
+    linting for all of `//...`.
     *   `external_data_workspace_tests.bzl` - Provides a list of workspaces to
     be tested, repository declarations, convenience wrappings for linting
     files, and macro for `external_data_workspace_test.sh`.

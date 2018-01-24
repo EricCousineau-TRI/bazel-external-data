@@ -1,9 +1,9 @@
 load(
-    "//tools/external_data:expose_all_files.bzl",
+    "//:expose_all_files.bzl",
     "recursive_filegroup",
 )
 load(
-    "//tools/external_data/test:workspace_test.bzl",
+    "//test:workspace_test.bzl",
     "workspace_test",
     "ARGS_DEFAULT",
 )
@@ -13,7 +13,7 @@ _workspace_list = [
 ]
 
 _upstream_files = [
-    "//tools/external_data:all_files_recursive",
+    "//:all_files_recursive",
 ]
 
 def external_data_workspace_test(
@@ -27,7 +27,7 @@ def external_data_workspace_test(
     @param args See `workspace_test`.
     @param data
         See `workspace_test`. This test will automatically
-        include basic upstream files from Drake (`//tools/external_data`) and
+        include basic upstream files from Drake (`//`) and
         the workspace test's files.
     """
     package = "@{}//".format(name)
@@ -52,7 +52,7 @@ def collect_external_data_lint_files():
     all of {"bazel_lint", "python_lint"}, such that they can be consumed by
     `add_lint_tests` as extra files.
     """
-    packages = ["//tools/external_data"]
+    packages = ["//"]
     for workspace in _workspace_list:
         package = "@" + workspace + "//"
         # Prepare to expose all files recursively.
@@ -81,10 +81,10 @@ def add_external_data_test_repositories(workspace_dir):
     #   must  be an existing directory
     # In another mode, you will get Java errors:
     #   java.lang.IllegalArgumentException: PathFragment
-    #   tools/external_data/workspace is not beneath
-    #   /home/${USER}/${WORKSPACE_DIR}/tools/external_data/workspace
+    #   /workspace is not beneath
+    #   /home/${USER}/${WORKSPACE_DIR}//workspace
     for workspace in _workspace_list:
         native.local_repository(
             name = workspace,
-            path = "tools/external_data/test/" + workspace,
+            path = "/test/" + workspace,
         )

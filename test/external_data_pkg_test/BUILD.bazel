@@ -1,11 +1,17 @@
 # -*- python -*-
 
-load("@drake//tools/external_data:expose_all_files.bzl", "expose_all_files")
-load(
-    "@drake//tools/external_data:external_data.bzl",
-    "external_data_stub_test",
+filegroup(
+    name = "external_data_sentinel",
+    srcs = [':.external_data.yml'],
+    visibility=["//:__subpackages__"],
 )
 
-external_data_stub_test()
-
-expose_all_files()
+py_test(
+    name = "test_basics",
+    srcs = ["test_basics.py"],
+    data = [
+        "//data",
+    ],
+    size = "small",
+    visibility = ["//visibility:public"],
+)
