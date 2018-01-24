@@ -1,8 +1,6 @@
 # -*- python -*-
 
-
 load("//:expose_all_files.bzl", "expose_all_files")
-
 
 # Use relative package path, as `py_library` does not like absolute package
 # paths. This ensures that `//src` is added to `PYTHONPATH`.
@@ -15,7 +13,7 @@ py_library(
         "mock.py",
     ],
     deps = [
-        "//src/bazel_external_data:core",
+        "//bazel_external_data:core",
     ],
     imports = imports,
 )
@@ -26,8 +24,7 @@ py_library(
         ":core",
     ],
     imports = imports,
-    visibility = ["//src/bazel_external_data:__subpackages__"],
+    visibility = ["//bazel_external_data:__subpackages__"],
 )
-
 
 expose_all_files()

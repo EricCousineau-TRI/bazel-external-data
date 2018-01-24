@@ -28,7 +28,7 @@ py_library(
     ],
     deps = [
         ":core",
-        "//src/bazel_external_data/backends",
+        "//bazel_external_data/backends",
     ],
     imports = imports,
     visibility = ["//visibility:public"],
