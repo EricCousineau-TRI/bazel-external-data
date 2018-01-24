@@ -199,18 +199,14 @@ def _external_data_check_test(file, settings):
     cli_sentinel = settings['cli_sentinel']
     cli_data = settings['cli_data']
 
+    # Use `exec.sh` to forward the existing CLI as a test.
     # TODO(eric.cousineau): Consider removing "external" as a test tag if it's
     # too cumbersome for general testing.
-
-    # Have to use `py_test` to run an existing binary with arguments...
-    # Blech.
-    native.py_test(
+    native.sh_test(
         name = name,
-        data = [hash_file, cli_sentinel] + cli_data,
-        srcs = [_TOOL],
-        main = _TOOL + ".py",
-        deps = ["@bazel_external_data_pkg//:cli_deps"],
-        args = args,
+        data = [_TOOL, hash_file, cli_sentinel] + cli_data,
+        srcs = ["@bazel_external_data_pkg//:exec.sh"],
+        args = ["$(location {})".format(_TOOL)] + args,
         tags = _TEST_TAGS + ["external"],
         # Changes `execroot`, and symlinks the files that we need to crawl the
         # directory structure and get hierarchical packages.
