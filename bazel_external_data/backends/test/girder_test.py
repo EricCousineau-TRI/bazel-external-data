@@ -17,7 +17,12 @@ args = parser.parse_args()
 
 assert args.api_key is not None
 
-user_config = {"girder": {"url": {args.url: {"api_key": args.api_key}}}}
+user_config = yaml.load("""
+girder:
+  url:
+    "{url}":
+        api_key: {api_key}
+""".format(url=args.url, api_key=args.api_key))
 user_config = config_helpers.merge_config(core.USER_CONFIG_DEFAULT, user_config)
 
 project_root = "/tmp/bazel_external_data/root"
@@ -27,9 +32,9 @@ user = core.User(user_config)
 
 config = yaml.load("""
 backend: girder_hashsum
-url: https://drake-girder.csail.mit.edu
+url: {}
 folder_path: /collection/test/files
-""")
+""".format(args.url))
 
 backend = GirderHashsumBackend(config, project_root, user)
 
