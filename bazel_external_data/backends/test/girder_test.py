@@ -6,11 +6,18 @@ import yaml
 from bazel_external_data import core, util, hashes, config_helpers
 from bazel_external_data.backends.girder import GirderHashsumBackend
 
+import argparse
+
 assert not util.in_bazel_runfiles()
 
-with open(os.path.expanduser("~/.config/bazel_external_data/config.yml")) as f:
-    user_config = yaml.load(f)
+parser = argparse.ArgumentParser()
+parser.add_argument("--url", type=str, default="https://drake-girder.csail.mit.edu")
+parser.add_argument("api_key", type=str)
+args = parser.parse_args()
 
+assert args.api_key is not None
+
+user_config = {"girder": {"url": {args.url: {"api_key": args.api_key}}}}
 user_config = config_helpers.merge_config(core.USER_CONFIG_DEFAULT, user_config)
 
 project_root = "/tmp/bazel_external_data/root"

@@ -27,7 +27,7 @@ class GirderHashsumBackend(Backend):
         # Cache configuration.
         self._config_cache_file = os.path.join(user.cache_dir, 'config', 'girder.yml')
 
-    def _request(self, endpoint, params={}, method="get"):
+    def _request(self, endpoint, params={}, method="get", stream=False):
         def json_value(value):
             if isinstance(value, str):
                 return value
@@ -38,7 +38,7 @@ class GirderHashsumBackend(Backend):
             headers = {"Girder-Token": self._token}
         params = {key: json_value(value) for key, value in params.iteritems()}
         func = getattr(requests, method)
-        r = func(self._api_url + endpoint, params=params, headers=headers)
+        r = func(self._api_url + endpoint, params=params, headers=headers, stream=stream)
         r.raise_for_status()
         return r
 
@@ -97,10 +97,12 @@ class GirderHashsumBackend(Backend):
             raise util.DownloadError("File not available in Girder folder '{}': {} (hash: {})".format(self._folder_path, project_relpath, hash))
         r = self._request("/file/hashsum/{algo}/{hash}/download"
                           .format(algo=hash.get_algo(), hash=hash.get_value()))
+        print(r)
         f = open(output_file, 'wb')
-        with r, f:
-            for chunk in r.iter_content(chunk_size=1024):
-                f.write(chunk)
+        with r:
+            with f:
+                for chunk in r.iter_content(chunk_size=1024):
+                    f.write(chunk)
 
     def _get_girder_client(self):
         # @note We import girder_client here, as only uploading requires it at present.
