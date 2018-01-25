@@ -113,7 +113,7 @@ class GirderHashsumBackend(Backend):
 
     def upload_file(self, hash, project_relpath, filepath):
         if self._disable_upload:
-            raise RuntimeErorr("Upload disabled")
+            raise RuntimeError("Upload disabled")
         item_name = "%s %s" % (os.path.basename(filepath), datetime.utcnow().isoformat())
         folder_id = self._get_folder_id()
 
