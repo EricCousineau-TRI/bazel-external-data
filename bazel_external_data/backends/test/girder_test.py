@@ -4,6 +4,7 @@
 Provides a simple test script for uploading and download a file.
 """
 
+import datetime
 import os
 import yaml
 
@@ -52,7 +53,8 @@ if not os.path.exists(project_root):
     os.makedirs(project_root)
 if not os.path.exists(output):
     os.makedirs(output)
-with open(path, 'w') as f: f.write("Test file")
+with open(path, 'w') as f:
+    f.write("Test file: " + str(datetime.datetime.now()))
 
 hash = hashes.sha512.compute(path)
 if not backend.check_file(hash, relpath):
