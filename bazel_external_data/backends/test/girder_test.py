@@ -45,6 +45,12 @@ backend = GirderHashsumBackend(config, project_root, user)
 relpath = "test.txt"
 path = os.path.join(project_root, relpath)
 
+if not os.path.exists(project_root):
+    os.makedirs(project_root)
+if not os.path.exists(output):
+    os.makedirs(output)
+with open(path, 'w') as f: f.write("Test file")
+
 hash = hashes.sha512.compute(path)
 if not backend.check_file(hash, relpath):
     backend.upload_file(hash, relpath, path)
