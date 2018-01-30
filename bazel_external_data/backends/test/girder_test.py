@@ -15,15 +15,18 @@ import argparse
 assert not util.in_bazel_runfiles()
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--url", type=str, default="https://drake-girder.csail.mit.edu")
-parser.add_argument("--folder_path", type=str, default="/collection/test/files")
-parser.add_argument("api_key", type=str)
+parser.add_argument("config_file", type=str)
 args = parser.parse_args()
+
+with open(args.config_file) as f:
+    config = yaml.load(f)
+
+url = config["url"]
+api_key = config["api_key"]
+folder_path = "/collection/test/files"
 
 project_root = "/tmp/bazel_external_data/root"
 output = "/tmp/bazel_external_data/output"
-
-assert args.api_key is not None
 
 user_config = core.USER_CONFIG_DEFAULT
 user_config.update(yaml.load("""
@@ -31,14 +34,14 @@ girder:
   url:
     "{url}":
         api_key: {api_key}
-""".format(url=args.url, api_key=args.api_key)))
+""".format(url=url, api_key=api_key)))
 user = core.User(user_config)
 
 config = yaml.load("""
 backend: girder_hashsum
 url: {url}
 folder_path: {folder_path}
-""".format(url=args.url, folder_path=args.folder_path))
+""".format(url=url, folder_path=folder_path))
 
 backend = GirderHashsumBackend(config, project_root, user)
 
