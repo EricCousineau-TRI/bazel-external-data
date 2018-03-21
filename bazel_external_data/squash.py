@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 """
-Squash a set of files to only get needed files.
+Squash a set of new files from a `head` remote to get the minimal set of new of
+files for `base`. These files are staged into `merge`.
 """
 
 # TODO(eric.cousineau): Upstream this into `bazel_external_data` if it can ever
@@ -21,7 +22,12 @@ def add_arguments(parser):
     parser.add_argument(
         "head", type=str, help="Head remote (e.g. `devel`)")
     parser.add_argument(
-        "merge", type=str, help="Merge remote (e.g. `merge`)")
+        "merge", type=str,
+        help="Merge remote (e.g. `merge`) to contain the files from `head` " +
+             "which are new to `base`")
+    parser.add_argument(
+        "--files", type=str, nargs='*', default=None,
+        help="Files to check. By default, checks all files.")
     parser.add_argument(
         "--stage_dir", type=str, default="/tmp/bazel_external_data/merge",
         help="Staging directory for temporarily downloading files")
@@ -38,12 +44,17 @@ def run(args, project):
 
     # List files.
     # TOOD(eric.cousineau): Move this to the project.
-    output = subprocess.check_output("find '{root}' -name '*.sha512'".format(
-        root=project.root_path), shell=True)
-    files = output.strip().split("\n")
+    if args.files is None:
+        output = subprocess.check_output(
+            "find '{root}' -name '*.sha512'".format(root=project.root_path),
+            shell=True)
+        files = output.strip().split("\n")
+    else:
+        files = [os.path.abspath(file) for file in args.files]
 
     for file_abspath in files:
-        info = project.get_file_info(file_abspath)
+        print(file_abspath)
+        info = project.get_file_info(file_abspath, needs_hash=True)
         if args.verbose:
             yaml.dump(
                 info.debug_config(), sys.stdout, default_flow_style=False)
@@ -57,10 +68,10 @@ def run(args, project):
         file_stage_dir = os.path.dirname(file_stage_abspath)
         if not os.path.exists(file_stage_dir):
             os.makedirs(file_stage_dir)
-        hash_head = head.download_file(
+        head.download_file(
             info.hash, info.project_relpath, file_stage_abspath, symlink=True)
         # Upload file to `merge`.
         hash_merge = merge.upload_file(
-            hash_head.hash_type, info.project_relpath, file_stage_abspath)
-        assert hash == hash_merge  # Sanity check
+            info.hash.hash_type, info.project_relpath, file_stage_abspath)
+        assert info.hash == hash_merge  # Sanity check
         print("Uploaded: {}".format(info.project_relpath))

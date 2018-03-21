@@ -15,6 +15,6 @@ remotes:
         overlay: master
     merge:
         backend: mock
-        dir: mock/extra_files
+        dir: mock/merge_files
         upload_dir: /tmp/bazel_external_data/upload_merge
         overlay: master

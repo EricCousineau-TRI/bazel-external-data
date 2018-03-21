@@ -29,10 +29,10 @@ parser.add_argument(
 
 subparsers = parser.add_subparsers(dest="command")
 
-download.add_arguments(subparsers.add_parser("download"))
-upload.add_arguments(subparsers.add_parser("upload"))
-check.add_arguments(subparsers.add_parser("check"))
-squash.add_arguments(subparsers.add_parser("squash"))
+download.add_arguments(subparsers.add_parser("download", help=download.__doc__))
+upload.add_arguments(subparsers.add_parser("upload", help=upload.__doc__))
+check.add_arguments(subparsers.add_parser("check", help=check.__doc__))
+squash.add_arguments(subparsers.add_parser("squash", help=squash.__doc__))
 
 args = parser.parse_args()
 
