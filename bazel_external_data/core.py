@@ -254,6 +254,7 @@ class Remote(object):
         @returns 'cache' if there was a cachce hit, 'download' otherwise.
         """
         assert os.path.isabs(output_file)
+        assert not os.path.exists(output_file)
 
         # Helper functions.
 
