@@ -246,4 +246,10 @@ bazel test :glob_4.bin__check_test && should_fail
 # - Ensure that testing across all download tests also fail.
 bazel test --test_tag_filters=external_data_check_test ... && should_fail
 
+# Check squashing.
+../tools/external_data squash master extra merge
+# - Ensure that we've uploaded only one file as desired.
+upload_merge_dir=${TEST_TMPDIR}/upload_merge
+[[ $(find ${upload_merge_dir} -type f | wc -l) -eq 1 ]]
+
 echo "[ Done ]"
