@@ -13,8 +13,9 @@ def external_data_archive_extract(
         # Double-load for simplicity.
         # Alternative: Re-write the data to a temp location.
         manifest = archive + ".bzl",
-    cmd = ("$(location {tool}) $(location {archive}) "
-           "--manifest {manifest} --output_dir {output_dir}").format(**info)
+    )
+    cmd = ("$(location {tool}) $(location {archive}) " +
+           "--manifest $(location {manifest}) --output_dir {output_dir}").format(**info)
 
     native.genrule(
         name = name,

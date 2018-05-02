@@ -1,7 +1,7 @@
 manifest = dict(
     files = [
-        "a.txt",
-        "b.txt",
-        "subdir/c.txt",
+        "test_data/a.txt",
+        "test_data/b.txt",
+        "test_data/subdir/c.txt",
     ],
 )

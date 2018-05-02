@@ -46,6 +46,7 @@ py_binary(
 )
 
 # Extract tarfile.
+load(":archive.bzl", "external_data_archive_extract")
 load(":test_data.tar.gz.bzl", test_data_manifest="manifest")
 external_data_archive_extract(
     name = "test_data",
