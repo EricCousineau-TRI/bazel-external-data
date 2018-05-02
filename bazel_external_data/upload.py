@@ -16,6 +16,9 @@ def add_arguments(parser):
         help="Only update local file information (e.g. hash file), but do not" +
              "upload the file.")
     parser.add_argument(
+        '--nomanifest', action='store_true',
+        help="Do not generate manifests for archive files.")
+    parser.add_argument(
         '--ignore_overlay', action='store_true',
         help="Ensure current remote has the file, ignoring the overlay.")
 
@@ -54,3 +57,5 @@ def do_upload(args, project, filepath):
     else:
         hash = hash.compute(orig_filepath)
     project.update_file_info(info, hash)
+    if not args.nomanifest and isarchive(info.project_relpath):
+        
