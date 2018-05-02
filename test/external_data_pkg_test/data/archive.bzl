@@ -35,7 +35,7 @@ def external_data_archive_extract(
         output_dir_full = output_dir_full,
         # Double-load for simplicity.
         # Alternative: Re-write the data to a temp location.
-        manifest = archive + ".bzl",
+        manifest = archive + ".manifest.bzl",
         strip_prefix = strip_prefix,
     )
     cmd = ("$(location {tool}) $(location {archive}) " +

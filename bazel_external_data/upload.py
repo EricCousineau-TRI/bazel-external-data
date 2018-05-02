@@ -6,7 +6,7 @@ import os
 import sys
 import yaml
 
-from bazel_external_data.util import eprint
+from bazel_external_data.util import eprint, is_archive, generate_bazel_manifest
 
 
 def add_arguments(parser):
@@ -16,11 +16,15 @@ def add_arguments(parser):
         help="Only update local file information (e.g. hash file), but do not" +
              "upload the file.")
     parser.add_argument(
-        '--nomanifest', action='store_true',
-        help="Do not generate manifests for archive files.")
-    parser.add_argument(
         '--ignore_overlay', action='store_true',
         help="Ensure current remote has the file, ignoring the overlay.")
+    parser.add_argument(
+        '--manifest_generation', type=str,
+        choices=["infer", "none", "force"], default="infer",
+        help=("Bazel Manifest generation policy for archives. If `infer`, the "
+              "manifest will be regenerated if it already exists. If `force`, "
+              "the manifest will always be generated. If `none`, no manifest "
+              "will be generated."))
 
 
 def run(args, project):
@@ -57,5 +61,15 @@ def do_upload(args, project, filepath):
     else:
         hash = hash.compute(orig_filepath)
     project.update_file_info(info, hash)
-    if not args.nomanifest and isarchive(info.project_relpath):
-        
+    if is_archive(info.project_relpath):
+        manifest_filepath = info.orig_filepath + ".manifest.bzl"
+        if args.manifest_generation == "infer":
+            do_manifest = os.path.isfile(manifest_filepath)
+        elif args.manifest_generation == "force":
+            do_manifest = True
+        elif args.manifest_generation == "none":
+            do_manifest = False
+        else:
+            assert False, "Bad switch"
+        if do_manifest:
+            generate_bazel_manifest(info.orig_filepath, manifest_filepath)
