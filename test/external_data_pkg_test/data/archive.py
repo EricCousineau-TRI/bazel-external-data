@@ -1,3 +1,5 @@
+"""Extracts an archive given a `*.bzl` manifest."""
+
 import argparse
 import tarfile
 
@@ -5,11 +7,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument("archive", type=str)
 parser.add_argument("--manifest", type=str)
 parser.add_argument("--output_dir", type=str)
+parser.add_argument("--strip_prefix", type=str)
 
 args = parser.parse_args()
-
-import os
-print(os.getcwd())
 
 with open(args.manifest) as f:
     manifest_text = f.read()
@@ -33,7 +33,27 @@ if tar_files != manifest_files:
     print("Files in manifest, not tar:")
     print("  " + "\n  ".join(manifest_not_tar))
     raise RuntimeError(
-        "Mismatch in manifest and tarfile; please regenerate tarfile manifest.")
+        "Mismatch in manifest and tarfile; please regenerate tarfile "
+        "manifest.")
 
+# Apply path transformations.
+# https://stackoverflow.com/a/8261083/7829525
+filtered_count = 0
+
+def filter_members(members):
+    global filtered_count
+    for member in members:
+        if member.name.startswith(args.strip_prefix):
+            old = member.name
+            member.name = member.name[len(args.strip_prefix):]
+            print("TFORM: {} -> {}".format(old, member.name))
+            filtered_count += 1
+            yield member
+
+print(args.output_dir)
 # Extract all files.
-f.extractall(path=args.output_dir, members=members)
+f.extractall(path=args.output_dir, members=filter_members(members))
+
+if len(members) > 0 and filtered_count == 0:
+    print("WARNING: `strip_prefix` has filtered out all elements, but there " +
+          "are more elements in the tarfile. Was this intendend?")
