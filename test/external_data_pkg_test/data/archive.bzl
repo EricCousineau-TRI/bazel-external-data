@@ -4,7 +4,14 @@ def extract_archive(
         manifest,
         strip_prefix = "",
         output_dir = ""):
-    tool = ":archive"
+    """Extracts an archive into a Bazel genfiles tree.
+
+    @param archive
+        Archive to be extracted.
+    @param manifest
+        Manifest dictionary. Due to constraints in Bazel, we must load this
+        outside of this function
+    """
     if output_dir.endswith("/"):
         fail("`output_dir` must not end with `/`")
     if strip_prefix and not strip_prefix.endswith("/"):
@@ -29,6 +36,7 @@ def extract_archive(
               .format(len(manifest["files"])))
     else:
         output_dir_full = "$(@D)/" + output_dir
+    tool = ":extract_archive"
     info = dict(
         archive_file = archive,
         tool = tool,

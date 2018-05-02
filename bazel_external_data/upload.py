@@ -6,7 +6,12 @@ import os
 import sys
 import yaml
 
-from bazel_external_data.util import eprint, is_archive, generate_bazel_manifest
+from bazel_external_data.util import (
+    eprint,
+    is_archive,
+    generate_bazel_manifest,
+    get_bazel_manifest_filename,
+)
 
 
 def add_arguments(parser):
@@ -62,7 +67,7 @@ def do_upload(args, project, filepath):
         hash = hash.compute(orig_filepath)
     project.update_file_info(info, hash)
     if is_archive(info.project_relpath):
-        manifest_filepath = info.orig_filepath + ".manifest.bzl"
+        manifest_filepath = get_bazel_manifest_filename(info.orig_filepath)
         if args.manifest_generation == "infer":
             do_manifest = os.path.isfile(manifest_filepath)
         elif args.manifest_generation == "force":

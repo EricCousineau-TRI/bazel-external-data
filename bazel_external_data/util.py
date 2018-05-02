@@ -103,7 +103,12 @@ def is_archive(filepath):
     return filepath.endswith(".tar.gz")
 
 
-def generate_bazel_manifest(archive, manifest):
+def get_bazel_manifest_filename(archive):
+    return archive + ".manifest.bzl"
+
+
+def generate_bazel_manifest(archive):
+    manifest = get_bazel_manifest_filename(manifest)
     with tarfile.open(archive) as tar, open(manifest, 'w') as f:
         # Get all files.
         members = []

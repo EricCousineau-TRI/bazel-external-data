@@ -41,8 +41,8 @@ external_data(
 )
 
 py_binary(
-    name = "archive",
-    srcs = ["archive.py"],
+    name = "extract_archive",
+    srcs = ["extract_archive.py"],
 )
 
 # Extract tarfile.
