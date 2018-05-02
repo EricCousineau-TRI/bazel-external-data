@@ -1,4 +1,4 @@
-def external_data_archive_extract(
+def extract_archive(
         name,
         archive,
         manifest,
@@ -30,21 +30,21 @@ def external_data_archive_extract(
     else:
         output_dir_full = "$(@D)/" + output_dir
     info = dict(
-        archive = archive,
+        archive_file = archive,
         tool = tool,
         output_dir_full = output_dir_full,
         # Double-load for simplicity.
         # Alternative: Re-write the data to a temp location.
-        manifest = archive + ".manifest.bzl",
+        manifest_file = archive + ".manifest.bzl",
         strip_prefix = strip_prefix,
     )
-    cmd = ("$(location {tool}) $(location {archive}) " +
-           "--manifest $(location {manifest}) " +
+    cmd = ("$(location {tool}) $(location {archive_file}) " +
+           "--manifest $(location {manifest_file}) " +
            "--output_dir '{output_dir_full}' " +
            "--strip_prefix '{strip_prefix}'").format(**info)
     native.genrule(
         name = name,
-        srcs = [archive, info["manifest"]],
+        srcs = [archive, info["manifest_file"]],
         outs = outs,
         tools = [tool],
         cmd = cmd,
