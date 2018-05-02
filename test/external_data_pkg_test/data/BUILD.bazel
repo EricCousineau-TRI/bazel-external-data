@@ -35,3 +35,20 @@ filegroup(
 expose_all_files(
     sub_dirs = ["subdir"],
 )
+
+external_data(
+    file = "test_data.tar.gz",
+)
+
+py_binary(
+    name = "archive",
+    srcs = ["archive.py"],
+)
+
+# Extract tarfile.
+load(":test_data.tar.gz.bzl", test_data_manifest="manifest")
+external_data_archive_extract(
+    name = "test_data",
+    archive = "test_data.tar.gz",
+    manifest = test_data_manifest,
+)
