@@ -3,6 +3,7 @@
 load("//tools:external_data.bzl",
     "external_data",
     "external_data_group",
+    "extract_archive",
     "get_original_files",
 )
 
@@ -40,18 +41,9 @@ external_data(
     file = "test_data.tar.gz",
 )
 
-py_binary(
-    name = "extract_archive",
-    srcs = ["extract_archive.py"],
-)
-
 # Extract tarfile.
-load(":archive.bzl", "extract_archive")
 load(":test_data.tar.gz.manifest.bzl", test_data_manifest="manifest")
 extract_archive(
     name = "test_data",
-    archive = "test_data.tar.gz",
     manifest = test_data_manifest,
-    strip_prefix = "test_data/",
-    output_dir = "test_data_other",
 )
