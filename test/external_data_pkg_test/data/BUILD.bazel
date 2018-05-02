@@ -24,26 +24,27 @@ external_data(
     file = "subdir/extra.bin",
 )
 
+external_data(
+    file = "archive.tar.gz",
+)
+
+# Extract tarfile.
+load(":archive.tar.gz.manifest.bzl", archive_manifest="manifest")
+extract_archive(
+    name = "archive",
+    manifest = archive_manifest,
+)
+
 filegroup(
     name = "data",
     srcs = [
         ":basic.bin",
         ":glob",
         ":subdir/extra.bin",
+        ":archive",
     ],
 )
 
 expose_all_files(
     sub_dirs = ["subdir"],
-)
-
-external_data(
-    file = "test_data.tar.gz",
-)
-
-# Extract tarfile.
-load(":test_data.tar.gz.manifest.bzl", test_data_manifest="manifest")
-extract_archive(
-    name = "test_data",
-    manifest = test_data_manifest,
 )

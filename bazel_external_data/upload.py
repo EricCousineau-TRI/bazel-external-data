@@ -66,19 +66,19 @@ def do_upload(args, project, filepath):
     else:
         hash = hash.compute(orig_filepath)
     project.update_file_info(info, hash)
-    handle_manifest(info)
+    handle_manifest(args, info)
 
 
-def handle_manifest(info):
+def handle_manifest(args, info):
     if is_archive(info.project_relpath):
         manifest_filepath = get_bazel_manifest_filename(info.orig_filepath)
         if args.manifest_generation == "infer":
             do_manifest = os.path.isfile(manifest_filepath)
-        elif args.manifest_generation == "force":
+        elif args.manifest_generation == "always":
             do_manifest = True
         elif args.manifest_generation == "none":
             do_manifest = False
         else:
             assert False, "Bad switch"
         if do_manifest:
-            generate_bazel_manifest(info.orig_filepath, manifest_filepath)
+            generate_bazel_manifest(info.orig_filepath)

@@ -108,7 +108,7 @@ def get_bazel_manifest_filename(archive):
 
 
 def generate_bazel_manifest(archive):
-    manifest = get_bazel_manifest_filename(manifest)
+    manifest = get_bazel_manifest_filename(archive)
     with tarfile.open(archive) as tar, open(manifest, 'w') as f:
         # Get all files.
         members = []
