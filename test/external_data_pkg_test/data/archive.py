@@ -37,7 +37,8 @@ if tar_files != manifest_files:
         "manifest.")
 
 # Apply path transformations.
-# https://stackoverflow.com/a/8261083/7829525
+# According to https://stackoverflow.com/a/8261083/7829525, we can magically
+# alter the `.name` field of a member to change where it gets extracted to.
 filtered_count = 0
 
 def filter_members(members):
@@ -46,11 +47,9 @@ def filter_members(members):
         if member.name.startswith(args.strip_prefix):
             old = member.name
             member.name = member.name[len(args.strip_prefix):]
-            print("TFORM: {} -> {}".format(old, member.name))
             filtered_count += 1
             yield member
 
-print(args.output_dir)
 # Extract all files.
 f.extractall(path=args.output_dir, members=filter_members(members))
 

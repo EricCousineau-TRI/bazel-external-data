@@ -52,6 +52,6 @@ external_data_archive_extract(
     name = "test_data",
     archive = "test_data.tar.gz",
     manifest = test_data_manifest,
-    strip_prefix = "test_data/subdir/",
+    strip_prefix = "test_data/subdirs/",
     output_dir = "test_data_other",
 )
