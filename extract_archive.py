@@ -1,4 +1,4 @@
-"""Extracts an archive given a `*.bzl` manifest.
+"""Extracts an archive, ensuring that it matches a given `*.bzl` manifest.
 
 This manifest should have been generated via `generate_bazel_manifest` in
 `bazel_external_data.util`. The manifest can be generated using:

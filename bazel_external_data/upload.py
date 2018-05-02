@@ -25,11 +25,11 @@ def add_arguments(parser):
         help="Ensure current remote has the file, ignoring the overlay.")
     parser.add_argument(
         '--manifest_generation', type=str,
-        choices=["infer", "none", "force"], default="infer",
-        help=("Bazel Manifest generation policy for archives. If `infer`, the "
-              "manifest will be regenerated if it already exists. If `force`, "
-              "the manifest will always be generated. If `none`, no manifest "
-              "will be generated."))
+        choices=["always", "infer", "none"], default="infer",
+        help=("Bazel Manifest generation policy for archives. If `always`, "
+              "the manifest will always be generated. If `infer`, the "
+              "manifest will be regenerated if it already exists. If `none`, "
+              "no manifest will be generated."))
 
 
 def run(args, project):
@@ -66,6 +66,10 @@ def do_upload(args, project, filepath):
     else:
         hash = hash.compute(orig_filepath)
     project.update_file_info(info, hash)
+    handle_manifest(info)
+
+
+def handle_manifest(info):
     if is_archive(info.project_relpath):
         manifest_filepath = get_bazel_manifest_filename(info.orig_filepath)
         if args.manifest_generation == "infer":
