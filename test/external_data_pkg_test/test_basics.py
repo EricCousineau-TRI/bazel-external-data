@@ -35,7 +35,6 @@ class TestBasics(unittest.TestCase):
     def test_files(self):
         # Go through each file and ensure that we have the desired contents.
         files = subshell("find data -name '*.bin' | sort")
-        print(files)
         for file in files.split('\n'):
             contents = open(file).read()
             file_name = os.path.basename(file)
