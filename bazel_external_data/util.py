@@ -119,10 +119,11 @@ def generate_bazel_manifest(archive, manifest):
                     "Bad tarfile file type: {} - {}".format(
                         member.name, member.type))
         # Generate text.
-        f.write("# Auto-generated manifest.")
+        f.write("# Auto-generated manifest.\n")
         f.write("manifest = dict(\n")
         f.write("    files = [\n")
-        for member in members:
-            f.write("        \"{}\",\n".format(member.name))
+        names = [member.name for member in members]
+        for name in sorted(names):
+            f.write("        \"{}\",\n".format(name))
         f.write("    ],\n")
         f.write(")\n")

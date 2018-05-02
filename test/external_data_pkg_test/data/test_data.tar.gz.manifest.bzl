@@ -1,3 +1,4 @@
+# Auto-generated manifest.
 manifest = dict(
     files = [
         "test_data/a.txt",

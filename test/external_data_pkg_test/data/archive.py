@@ -28,13 +28,15 @@ manifest_files = sorted(manifest["files"])
 if tar_files != manifest_files:
     tar_not_manifest = set(tar_files) - set(manifest_files)
     manifest_not_tar = set(manifest_files) - set(tar_files)
-    print("Files in tar, not manifest:")
-    print("  " + "\n  ".join(tar_not_manifest))
-    print("Files in manifest, not tar:")
-    print("  " + "\n  ".join(manifest_not_tar))
+    msg = "  Files in tar, not manifest:\n"
+    msg += "    " + "\n    ".join(tar_not_manifest) + "\n\n"
+    msg += "  Files in manifest, not tar:\n"
+    msg += "    " + "\n    ".join(manifest_not_tar) + "\n"
     raise RuntimeError(
-        "Mismatch in manifest and tarfile; please regenerate tarfile "
-        "manifest.")
+        "Mismatch in manifest and archive; please regenerate archive "
+        "manifest.\n\n"
+        "  To fix: <cli> upload --manifest_generation=force <archive>\n\n" +
+        msg)
 
 # Apply path transformations.
 # According to https://stackoverflow.com/a/8261083/7829525, we can magically
