@@ -6,11 +6,30 @@ def extract_archive(
         output_dir = ""):
     """Extracts an archive into a Bazel genfiles tree.
 
+    Example:
+        load(
+            "//tools/external_data:macros.bzl",
+            "extract_archive",
+        )
+        load(":my_archive.tar.gz.manifest.bzl", my_archive_manifest="manifest")
+        extract_archive(
+            name = "my_archive",
+            archive = "my_archive.tar.gz",
+            manifest = my_archive_manifest,
+            strip_prefix = "my_archive/",
+            output_dir = "other_dir",
+        )
+
     @param archive
         Archive to be extracted.
     @param manifest
-        Manifest dictionary. Due to constraints in Bazel, we must load this
-        outside of this function
+        Manifest dictionary loaded from a manifest Bazel file.
+        Due to constraints in Bazel, we must load this file. For simplicity,
+        this file must be named "{archive}.manifest.bzl".
+    @param strip_prefix
+        Prefix to be stripped from archive. If non-empty, must end with `/`.
+    @param output_dir
+        Output directory. If non-empty, must not end with `/`.
     """
     if output_dir.endswith("/"):
         fail("`output_dir` must not end with `/`")
