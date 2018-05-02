@@ -261,6 +261,9 @@ def extract_archive(
     @param output_dir
         Output directory. If non-empty, must not end with `/`.
     """
+    # Using: https://groups.google.com/forum/#!topic/bazel-discuss/B5WFlG3co4I
+    # TODO(eric.cousineau): Add ability to select specific files of the archive
+    # with globs or something (after stripping prefix).
     if archive == None:
         archive = name + ".tar.gz"
     if manifest == None:
@@ -269,7 +272,6 @@ def extract_archive(
         fail("`output_dir` must not end with `/`")
     if strip_prefix and not strip_prefix.endswith("/"):
         fail("`strip_prefix` must end with `/` if non-empty")
-    # https://groups.google.com/forum/#!topic/bazel-discuss/B5WFlG3co4I
     outs = []
     for file in manifest["files"]:
         if file.startswith(strip_prefix):
