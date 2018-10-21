@@ -28,6 +28,6 @@ py_test(
     name = "test_repo_example",
     srcs = ["test_repo_example.py"],
     data = [
-        "@repo_example//:test.txt",
+        "@repo_example//:basic.bin",
     ],
 )

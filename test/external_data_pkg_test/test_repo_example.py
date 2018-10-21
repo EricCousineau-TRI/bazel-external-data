@@ -1,6 +1,7 @@
 from os.path import isfile
 
-filename = "external/repo_example/test.txt"
+filename = "external/repo_example/basic.bin"
 assert isfile(filename)
 with open(filename) as f:
-    assert f.read() == "Hello world\n"
+    c = f.read()
+    assert c == "Content for 'basic.bin'\n", c
