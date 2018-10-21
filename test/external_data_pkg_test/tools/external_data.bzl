@@ -2,6 +2,7 @@
 load("@bazel_external_data_pkg//:external_data.bzl",
     _external_data="external_data",
     _external_data_download="external_data_download",
+    "external_data_extract",
     _external_data_group="external_data_group",
     "get_original_files",
     "extract_archive",

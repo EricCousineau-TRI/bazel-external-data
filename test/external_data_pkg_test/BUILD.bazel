@@ -28,5 +28,6 @@ py_test(
     srcs = ["test_repo_example.py"],
     data = [
         "@repo_example//:basic.bin",
+        "@repo_archive//:test_data",
     ],
 )

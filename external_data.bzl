@@ -360,9 +360,15 @@ def external_data_download(
 def external_data_extract(
         repository_ctx, file, output_dir=".", strip_prefix=""):
     # Requires that `external_data_download` ran previously.
+    if output_dir.endswith("/"):
+        fail("`output_dir` must not end with `/`")
+    if strip_prefix and not strip_prefix.endswith("/"):
+        fail("`strip_prefix` must end with `/` if non-empty")
     args = [
-        "./bazel_repo_cli.py", "extract",
-        file, "--output_dir=" + output_dir, "--strip_prefix=" + strip_prefix,
+        "./bazel_repo_cli.py",
+        "extract", file,
+        "--output_dir=" + output_dir,
+        "--strip_prefix=" + strip_prefix,
     ]
     res = repository_ctx.execute(args)
     if res.return_code != 0:
