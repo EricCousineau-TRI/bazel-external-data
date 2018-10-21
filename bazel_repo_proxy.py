@@ -16,10 +16,5 @@ bazel_dir = dirname(os.readlink(__file__))
 env = dict(os.environ)
 env["PYTHONPATH"] = bazel_dir + ":" + env.get("PYTHONPATH", "")
 
-files = sys.argv[1:]
-args = [
-    sys.executable, "-m", "bazel_external_data.cli",
-    "--project_root_guess=.external_data.yml",
-    "--user_config=external_data.user.yml",
-    "download", "--symlink"] + files
+args = [sys.executable, "-m", "bazel_external_data.cli"] + sys.argv[1:]
 os.execve(args[0], args, env)
