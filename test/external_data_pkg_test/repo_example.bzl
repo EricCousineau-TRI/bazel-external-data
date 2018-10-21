@@ -1,19 +1,30 @@
 load("//tools:external_data.bzl", "SETTINGS")
 
-def _repo_impl(repo):
+def external_data_repo_files(repo, files):
     repo.symlink(Label("@bazel_external_data_pkg//:bazel_repo_proxy.py"), "_proxy")
     repo.symlink(Label("//:.external_data.yml"), ".external_data.yml")
     repo.symlink(Label("//tools:external_data.user.yml"), "external_data.user.yml")
-    repo.symlink(Label("//data:basic.bin.sha512"), "basic.bin.sha512")
-    repo.execute(
-        ["./_proxy", "basic.bin"],
-        quiet=False,
-    )
+    bases = []
+    for file in files:
+        _, base = file.split(":")
+        bases.append(base)
+        repo.symlink(Label(file), base)
+    res = repo.execute(["./_proxy"] + bases)
+    if res.return_code != 0:
+        fail(res.stdout + res.stderr)
+
+def _repo_impl(repo):
+    external_data_repo_files(
+        repo,
+        files = [
+            "//data:basic.bin.sha512",
+            "//data:glob_1.bin.sha512",
+        ])
     repo.file(
         "BUILD.bazel",
         content="""
 exports_files(
-    srcs = ["basic.bin"],
+    srcs = glob(["*.bin"]),
 )
 """,
     )
