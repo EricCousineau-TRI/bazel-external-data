@@ -20,7 +20,7 @@ def _impl(ctx):
         ctx, name, strip_prefix="archive/", output_dir="test_data")
     ctx.file("BUILD.bazel", content="""
 filegroup(
-    name = "test_data",
+    name = "data",
     srcs = glob(["**/*.bin"]),
     visibility = ["//visibility:public"],
 )

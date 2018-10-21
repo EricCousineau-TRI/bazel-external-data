@@ -41,7 +41,7 @@ def _repo_impl(repo):
         files = repo.attr.files)
     repo.file(
         "BUILD.bazel",
-        content="exports_files(srcs = {})\n".format(repr(names)),
+        content="filegroup(name = 'data', srcs = {}, visibility = ['//visibility:public'])\n".format(repr(names)),
     )
 
 external_data_repository = repository_rule(

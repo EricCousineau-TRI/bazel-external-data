@@ -59,6 +59,7 @@ class TestBasics(unittest.TestCase):
     def test_repository_rules(self):
         files = [
             "external/repo_example/basic.bin",
+            "external/repo_example/glob_1.bin",
             "external/repo_archive/test_data/a.bin",
             "external/repo_archive/test_data/b.bin",
             "external/repo_archive/test_data/subdir/c.bin",
