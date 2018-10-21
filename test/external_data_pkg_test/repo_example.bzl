@@ -1,6 +1,6 @@
 load("//tools:external_data.bzl", "SETTINGS")
 
-def external_data_repository_files(repo, files):
+def external_data_download(repo, files):
     repo.symlink(Label("@bazel_external_data_pkg//:bazel_repo_proxy.py"), "_proxy")
     f = Label(SETTINGS["cli_sentinel"])
     repo.symlink(f, f.name)
@@ -11,13 +11,13 @@ def external_data_repository_files(repo, files):
         _, base = file.split(":")
         bases.append(base)
         repo.symlink(Label(file), base)
-    res = repo.execute(["./_proxy"] + bases)
+    res = repo.execute(["./_proxy"] + bases, quiet=False)
     if res.return_code != 0:
         fail(res.stdout + res.stderr)
 
 
 def _repo_impl(repo):
-    external_data_repository_files(
+    external_data_download(
         repo,
         files = [
             "//data:basic.bin.sha512",
