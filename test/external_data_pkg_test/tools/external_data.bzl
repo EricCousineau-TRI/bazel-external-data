@@ -30,13 +30,14 @@ def external_data_download(*args, **kwargs):
     return _external_data_download(
         *args,
         settings = SETTINGS,
+        prefix = "@external_data_pkg_test",
         **kwargs
     )
 
 def _repo_impl(repo):
     names = external_data_download(
         repo,
-        labels = repo.attr.files)
+        files = repo.attr.files)
     repo.file(
         "BUILD.bazel",
         content="exports_files(srcs = {})\n".format(repr(names)),
@@ -45,7 +46,7 @@ def _repo_impl(repo):
 external_data_repository = repository_rule(
     implementation = _repo_impl,
     attrs = {
-        "files": attr.label_list(allow_files=True),
+        "files": attr.string_list(),
     },
     local = True,
 )
