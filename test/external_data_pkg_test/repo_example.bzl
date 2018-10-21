@@ -13,6 +13,7 @@ exports_files(
 
 _repo = repository_rule(
     implementation = _repo_impl,
+    # local = True,
 )
 
 def add_repo_example_repository(name = "repo_example"):
