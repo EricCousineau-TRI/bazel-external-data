@@ -23,6 +23,7 @@ py_library(
     name = "cli_base",
     srcs = [
         "download.py",
+        "extract.py",
         "upload.py",
         "check.py",
         "squash.py",

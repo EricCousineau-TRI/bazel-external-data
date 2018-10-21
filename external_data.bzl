@@ -30,7 +30,7 @@ _TOOL = "@bazel_external_data_pkg//:cli"
 _MANIFEST_SUFFIX = ".manifest.bzl"
 
 
-def _get_cli_base_args(filepath, settings):
+def _get_cli_base_args(settings):
     args = []
     # Argument: Verbosity.
     if settings['verbose']:
@@ -91,7 +91,7 @@ def external_data(
         # Binary:
         args = ["$(location {})".format(_TOOL)]
         # General commands.
-        args += _get_cli_base_args(hash_file, settings)
+        args += _get_cli_base_args(settings)
         # Subcommand: Download.
         args.append("download")
         # Argument: Caching.
@@ -197,7 +197,7 @@ def _external_data_check_test(file, settings):
     name = file + _TEST_SUFFIX
     hash_file = file + _HASH_SUFFIX
 
-    args = _get_cli_base_args(hash_file, settings)
+    args = _get_cli_base_args(settings)
     args += [
         "check",
         "$(location {})".format(hash_file),
@@ -301,17 +301,16 @@ def extract_archive(
               .format(len(manifest["files"])))
     else:
         output_dir_full = "$(@D)/" + output_dir
-    tool = "@bazel_external_data_pkg//:extract_archive"
     info = dict(
         archive_file = archive,
-        tool = tool,
+        tool = _TOOL,
         output_dir_full = output_dir_full,
         # Double-load for simplicity.
         # Alternative: Re-write the data to a temp location.
         manifest_file = archive + _MANIFEST_SUFFIX,
         strip_prefix = strip_prefix,
     )
-    cmd = ("$(location {tool}) $(location {archive_file}) " +
+    cmd = ("$(location {tool}) extract $(location {archive_file}) " +
            "--manifest $(location {manifest_file}) " +
            "--output_dir '{output_dir_full}' " +
            "--strip_prefix '{strip_prefix}'").format(**info)
@@ -319,7 +318,7 @@ def extract_archive(
         name = name,
         srcs = [archive, info["manifest_file"]],
         outs = outs,
-        tools = [tool],
+        tools = [_TOOL],
         cmd = cmd,
         **kwargs)
 

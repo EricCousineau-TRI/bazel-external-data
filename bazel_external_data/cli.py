@@ -6,7 +6,8 @@ import sys
 import traceback
 import yaml
 
-from bazel_external_data import config_helpers, download, upload, check, squash
+from bazel_external_data import (
+    config_helpers, download, upload, check, squash, extract)
 from bazel_external_data.core import load_project
 from bazel_external_data.util import eprint, in_bazel_runfiles
 
@@ -33,6 +34,7 @@ download.add_arguments(subparsers.add_parser("download", help=download.__doc__))
 upload.add_arguments(subparsers.add_parser("upload", help=upload.__doc__))
 check.add_arguments(subparsers.add_parser("check", help=check.__doc__))
 squash.add_arguments(subparsers.add_parser("squash", help=squash.__doc__))
+extract.add_arguments(subparsers.add_parser("extract", help=extract.__doc__))
 
 args = parser.parse_args()
 
@@ -50,6 +52,14 @@ if args.verbose:
     eprint("  pwd: {}".format(os.getcwd()))
     eprint("  argv[0]: {}".format(sys.argv[0]))
     eprint("  argv[1:]: {}".format(sys.argv[1:]))
+
+if args.command == "extract":
+    # Extract without loading project.
+    good = extract.run(args)
+    if good or good is None:
+        exit(0)
+    else:
+        exit(1)
 
 project = load_project(
     os.path.abspath(args.project_root_guess),
