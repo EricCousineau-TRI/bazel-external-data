@@ -1,23 +1,28 @@
-load("//tools:external_data.bzl", "SETTINGS")
+load("//tools:external_data.bzl", "SETTINGS", "get_original_files")
 
-def external_data_download(repo, files):
-    repo.symlink(Label("@bazel_external_data_pkg//:bazel_repo_proxy.py"), "_proxy")
-    f = Label(SETTINGS["cli_sentinel"])
-    repo.symlink(f, f.name)
-    f = Label(SETTINGS["cli_user_config"])
-    repo.symlink(f, f.name)
-    bases = []
+def external_data_download(repo, files, setup=True):
+    if setup:
+        setup_files = [
+            "@bazel_external_data_pkg//:bazel_repo_proxy.py",
+            SETTINGS["cli_sentinel"],
+            SETTINGS["cli_user_config"],
+        ]
+        for file in setup_files:
+            label = Label(file)
+            repo.symlink(label, label.name)
+    names = []
     for file in files:
-        _, base = file.split(":")
-        bases.append(base)
-        repo.symlink(Label(file), base)
-    res = repo.execute(["./_proxy"] + bases, quiet=False)
+        label = Label(file)
+        names.append(label.name)
+        repo.symlink(label, label.name)
+    res = repo.execute(["./bazel_repo_proxy.py"] + names)
     if res.return_code != 0:
-        fail(res.stdout + res.stderr)
+        fail("External data failure: {}\n{}".format(res.stdout, res.stderr))
+    return get_original_files(names)
 
 
 def _repo_impl(repo):
-    external_data_download(
+    names = external_data_download(
         repo,
         files = [
             "//data:basic.bin.sha512",
@@ -27,9 +32,9 @@ def _repo_impl(repo):
         "BUILD.bazel",
         content="""
 exports_files(
-    srcs = glob(["*.bin"]),
+    srcs = {},
 )
-""",
+""".format(repr(names)),
     )
 
 _repo = repository_rule(
