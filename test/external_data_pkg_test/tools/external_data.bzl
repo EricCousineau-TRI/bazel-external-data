@@ -12,14 +12,12 @@ SETTINGS = dict(
     cli_user_config = "//tools:external_data.user.yml",
 )
 
-
 def external_data(*args, **kwargs):
     _external_data(
         *args,
         settings = SETTINGS,
         **kwargs
     )
-
 
 def external_data_group(*args, **kwargs):
     _external_data_group(
@@ -28,7 +26,6 @@ def external_data_group(*args, **kwargs):
         **kwargs
     )
 
-
 def external_data_download(*args, **kwargs):
     return _external_data_download(
         *args,
@@ -36,3 +33,20 @@ def external_data_download(*args, **kwargs):
         prefix = "@external_data_pkg_test",
         **kwargs
     )
+
+def _repo_impl(repo):
+    names = external_data_download(
+        repo,
+        files = repo.attr.files)
+    repo.file(
+        "BUILD.bazel",
+        content="exports_files(srcs = {})\n".format(repr(names)),
+    )
+
+external_data_repository = repository_rule(
+    implementation = _repo_impl,
+    attrs = {
+        "files": attr.string_list(),
+    },
+    local = True,
+)
