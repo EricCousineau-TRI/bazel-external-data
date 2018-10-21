@@ -23,3 +23,11 @@ expose_all_files(
     sub_packages = ["data", "tools"],
     sub_dirs = ["mock"],
 )
+
+py_test(
+    name = "test_repo_example",
+    srcs = ["test_repo_example.py"],
+    data = [
+        "@repo_example//:test.txt",
+    ],
+)
