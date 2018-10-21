@@ -355,3 +355,15 @@ def external_data_download(
     if res.return_code != 0:
         fail("External data failure: {}\n{}".format(res.stdout, res.stderr))
     return get_original_files(names)
+
+
+def external_data_extract(
+        repository_ctx, file, output_dir=".", strip_prefix=""):
+    # Requires that `external_data_download` ran previously.
+    args = [
+        "./bazel_repo_cli.py", "extract",
+        file, "--output_dir=" + output_dir, "--strip_prefix=" + strip_prefix,
+    ]
+    res = repository_ctx.execute(args)
+    if res.return_code != 0:
+        fail("External data failure: {}\n{}".format(res.stdout, res.stderr))
