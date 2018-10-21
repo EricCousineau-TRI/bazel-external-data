@@ -322,3 +322,37 @@ def extract_archive(
         tools = [tool],
         cmd = cmd,
         **kwargs)
+
+
+def external_data_download(
+        repository_ctx, files, prefix="", settings=SETTINGS_DEFAULT):
+    """
+    Provides a mechanism to download external data files as part of a
+    repository rule.
+    """
+    settings = SETTINGS_DEFAULT + settings
+    # Add setup files.
+    proxy = Label("@bazel_external_data_pkg//:bazel_repo_cli.py")
+    repository_ctx.symlink(proxy, proxy.name)
+    args = ["./" + proxy.name]
+    if settings["verbose"]:
+        args += ["--verbose"]
+    config = Label(prefix + settings["cli_sentinel"])
+    repository_ctx.symlink(config, config.name)
+    args += ["--project_root_guess=" + config.name]
+    if settings["cli_user_config"]:
+        user_config = Label(prefix + settings["cli_user_config"])
+        repository_ctx.symlink(user_config, user_config.name)
+        args += ["--user_config=" + user_config.name]
+    # Add data files.
+    names = []
+    for file in files:
+        label = Label(prefix + file)
+        names.append(label.name)
+        repository_ctx.symlink(label, label.name)
+    # Download.
+    args += ["download", "--symlink"] + names
+    res = repository_ctx.execute(args)
+    if res.return_code != 0:
+        fail("External data failure: {}\n{}".format(res.stdout, res.stderr))
+    return get_original_files(names)
