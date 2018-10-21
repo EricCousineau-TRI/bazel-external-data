@@ -7,13 +7,8 @@ load("@bazel_external_data_pkg//:external_data.bzl",
 )
 
 SETTINGS = dict(
-    cli_sentinel = "//:external_data_sentinel",
-    cli_data = [
-        "//tools:external_data.user.yml",
-    ],
-    cli_extra_args = [
-        "--user_config=$(location //tools:external_data.user.yml)"
-    ],
+    cli_sentinel = "//:.external_data.yml",
+    cli_user_config = "//tools:external_data.user.yml",
 )
 
 

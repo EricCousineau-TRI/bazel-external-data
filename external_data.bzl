@@ -8,12 +8,10 @@ SETTINGS_DEFAULT = dict(
     # WARNING: The sentinel MUST be placed next to the workspace root.
     # TODO(eric.cousineau): If the logic can be simplified, consider relaxing
     # this.
-    cli_sentinel = "//:external_data_sentinel",
-    # Extra tool data. Generally, this is empty. However, any custom
-    # configuration modules can be included here as well.
-    cli_data = [],
-    # Extra arguments to `cli`. Namely for `--user_config` for mock testing,
-    # but can be changed.
+    cli_sentinel = "//:.external_data.yml",
+    # User configuration file. If None, will use default.
+    cli_user_config = None,
+    # Extra arguments to `cli`.
     # @note This is NOT for arguments after `cli ... download`.
     cli_extra_args = [],
     # For each `external_data` target, will add an integrity check for the file.
@@ -117,8 +115,10 @@ def external_data(
                   .format(file, mode) + "\n  cmd: {}".format(cmd))
 
         cli_sentinel = settings['cli_sentinel']
-        cli_data = settings['cli_data']
-        data = [hash_file, cli_sentinel] + cli_data
+        cli_user_config = settings['cli_user_config']
+        data = [hash_file, cli_sentinel]
+        if cli_user_config:
+            data.append(cli_user_config)
 
         native.genrule(
             name = name,
@@ -204,14 +204,17 @@ def _external_data_check_test(file, settings):
     ]
 
     cli_sentinel = settings['cli_sentinel']
-    cli_data = settings['cli_data']
+    cli_user_config = settings['cli_user_config']
+    data = [_TOOL, hash_file, cli_sentinel]
+    if cli_user_config:
+        data.append(cli_user_config)
 
     # Use `exec.sh` to forward the existing CLI as a test.
     # TODO(eric.cousineau): Consider removing "external" as a test tag if it's
     # too cumbersome for general testing.
     native.sh_test(
         name = name,
-        data = [_TOOL, hash_file, cli_sentinel] + cli_data,
+        data = data,
         srcs = ["@bazel_external_data_pkg//:exec.sh"],
         args = ["$(location {})".format(_TOOL)] + args,
         tags = _TEST_TAGS + ["external"],

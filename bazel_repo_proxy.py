@@ -1,5 +1,10 @@
 #!/usr/bin/env python2
 
+"""
+Provides a mechanism to provide a subset of `//:cli` functionality to leverage
+external data in repository rules.
+"""
+
 import os
 from os.path import abspath, dirname, isdir, join
 from shutil import rmtree
@@ -9,7 +14,8 @@ import sys
 repo_dir = dirname(__file__)
 bazel_dir = dirname(os.readlink(__file__))
 
-work_dir = join(repo_dir, "tmp")
+# Create temporary bazel workspace to emulate `bazel_external_data_pkg`.
+work_dir = join(repo_dir, "bazel_external_data_pkg")
 if isdir(work_dir):
     rmtree(work_dir)
 os.mkdir(work_dir)

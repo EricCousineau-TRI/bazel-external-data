@@ -1,9 +1,11 @@
 load("//tools:external_data.bzl", "SETTINGS")
 
-def external_data_repo_files(repo, files):
+def external_data_repository_files(repo, files):
     repo.symlink(Label("@bazel_external_data_pkg//:bazel_repo_proxy.py"), "_proxy")
-    repo.symlink(Label("//:.external_data.yml"), ".external_data.yml")
-    repo.symlink(Label("//tools:external_data.user.yml"), "external_data.user.yml")
+    f = Label(SETTINGS["cli_sentinel"])
+    repo.symlink(f, f.name)
+    f = Label(SETTINGS["cli_user_config"])
+    repo.symlink(f, f.name)
     bases = []
     for file in files:
         _, base = file.split(":")
@@ -13,8 +15,9 @@ def external_data_repo_files(repo, files):
     if res.return_code != 0:
         fail(res.stdout + res.stderr)
 
+
 def _repo_impl(repo):
-    external_data_repo_files(
+    external_data_repository_files(
         repo,
         files = [
             "//data:basic.bin.sha512",
