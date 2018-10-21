@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+from os.path import basename
 import subprocess
 import unittest
 
@@ -54,6 +55,19 @@ class TestBasics(unittest.TestCase):
                     print("Skipping: {}".format(file))
             else:
                 self.assertEquals(contents, mock_contents)
+
+    def test_repository_rules(self):
+        files = [
+            "external/repo_example/basic.bin",
+            "external/repo_archive/test_data/a.bin",
+            "external/repo_archive/test_data/b.bin",
+            "external/repo_archive/test_data/subdir/c.bin",
+        ]
+        for file in files:
+            with open(file) as f:
+                c = f.read()
+                expected = "Content for '{}'\n".format(basename(file))
+                assert c == expected, c
 
 
 if __name__ == '__main__':

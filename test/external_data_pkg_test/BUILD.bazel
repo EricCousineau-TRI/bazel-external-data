@@ -11,8 +11,10 @@ py_test(
     name = "test_basics",
     srcs = ["test_basics.py"],
     data = [
-        "//data",
         "mock",  # Directory.
+        "//data",
+        "@repo_example//:basic.bin",
+        "@repo_archive//:test_data",
     ],
     size = "small",
     visibility = ["//visibility:public"],
@@ -21,13 +23,4 @@ py_test(
 expose_all_files(
     sub_packages = ["data", "tools"],
     sub_dirs = ["mock"],
-)
-
-py_test(
-    name = "test_repo_example",
-    srcs = ["test_repo_example.py"],
-    data = [
-        "@repo_example//:basic.bin",
-        "@repo_archive//:test_data",
-    ],
 )
