@@ -2,9 +2,8 @@
 
 load("@bazel_external_data_pkg//:expose_all_files.bzl", "expose_all_files")
 
-filegroup(
-    name = "external_data_sentinel",
-    srcs = [":.external_data.yml"],
+exports_files(
+    srcs = [".external_data.yml"],
     visibility = ["//:__subpackages__"],
 )
 
@@ -15,6 +14,7 @@ py_test(
     data = [
         "mock",  # Directory.
         "//data",
+        "@repo_archive//:data",
     ],
     visibility = ["//visibility:public"],
 )
